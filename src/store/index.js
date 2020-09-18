@@ -29,7 +29,7 @@ export default new Vuex.Store({
       //books.splice(index, 1)
      // state.books = books
 
-      state.books = books.filter(b => b.id === id)
+      state.books = books.filter(b => b.id !== id)
       localStorage.setItem('books', JSON.stringify(state.books))
     }
   },
