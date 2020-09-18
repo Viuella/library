@@ -37,7 +37,22 @@
         mounted() {
             this.title = this.book.title,
             this.author = this.book.author,
-            this.description = this.book.description
+            this.description = this.book.description,
+            //M.updateTextFields()
+            setTimeout( () => {
+                M.updateTextFields()
+            },0)
+        },
+        methods: {
+            submitHandler() {
+                this.$store.dispatch('updateBook', {
+                    id: this.book.id,
+                    title: this.title,
+                    author: this.author,
+                    description: this.description,
+                });
+                this.$router.push('/list');
+            }
         }
     }
 </script>
