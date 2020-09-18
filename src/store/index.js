@@ -3,45 +3,55 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+function saveDataToLocalStorage(field, data) {
+  localStorage.setItem(field, JSON.stringify(data))
+}
+function loadFromLocalStorage(field) {
+  return JSON.parse(localStorage.getItem(field) || '[]')
+}
+
+function saveBooks(state) {
+  saveDataToLocalStorage('books', state.books)
+}
+
 export default new Vuex.Store({
   state: {
-    books: JSON.parse(localStorage.getItem('books') || '[]')
+    books: []
   },
   mutations: {
+    setBooks(state, books) {
+      state.books = books
+    },
     createBook(state, book) {
       state.books.push(book)
-      localStorage.setItem('books', JSON.stringify(state.books))
     },
     updateBook(state, {id, title, author, description}) {
-      const books = state.books.concat()
-      const index = books.findIndex(b => b.id === id)
-      const book = books[index]
+      const book = state.books.find(b => b.id === id)
 
-      books[index] = {...book, title, author, description}
-
-      state.books = books
-      localStorage.setItem('books', JSON.stringify(state.books))
+      book.title = title
+      book.author = author
+      book.description = description
     },
     deleteBook(state, id) {
-      const books = state.books.concat()
-     // const index = books.findIndex(b => b.id === id)
-      //const book = books[index]
-      //books.splice(index, 1)
-     // state.books = books
-
-      state.books = books.filter(b => b.id !== id)
-      localStorage.setItem('books', JSON.stringify(state.books))
+      state.books = state.books.filter(b => b.id !== id)
     }
   },
   actions: {
-    createBook({commit}, book) {
+    loadBooks({commit}) {
+      const books = loadFromLocalStorage('books')
+      commit('setBooks', books)
+    },
+    createBook({commit, state}, book) {
       commit('createBook', book)
+      saveBooks(state)
     },
-    updateBook({commit}, book) {
+    updateBook({commit, state}, book) {
       commit('updateBook', book)
+      saveBooks(state)
     },
-    deleteBook({commit}, book) {
+    deleteBook({commit, state}, book) {
       commit('deleteBook', book)
+      saveBooks(state)
     }
   },
   getters: {
